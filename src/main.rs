@@ -3,14 +3,13 @@
 #[macro_use]
 extern crate rocket;
 
-use std::fs::File;
-use std::io::{BufReader, BufRead};
-use rocket::request::{self, Request, FromRequest};
+use rocket::fairing::AdHoc;
 use rocket::http::Status;
+use rocket::request::{self, FromRequest, Request};
 use rocket::Outcome;
 use rocket::State;
-use rocket::fairing::AdHoc;
-
+use std::fs::File;
+use std::io::{BufRead, BufReader};
 
 struct Token(String);
 
@@ -32,11 +31,11 @@ impl<'a, 'r> FromRequest<'a, 'r> for Token {
             1 => {
                 for t in tokens {
                     if ct_compare(&t.0, keys[0]) {
-                        return Outcome::Success(Token(keys[0].to_string()))
+                        return Outcome::Success(Token(keys[0].to_string()));
                     }
                 }
                 Outcome::Failure((Status::BadRequest, ApiKeyError::Invalid))
-            },
+            }
             _ => Outcome::Failure((Status::BadRequest, ApiKeyError::BadCount)),
         }
     }
@@ -53,17 +52,18 @@ fn ct_compare(a: &str, b: &str) -> bool {
         return false;
     }
 
-    a.bytes().zip(b.bytes())
-        .fold(0, |acc, (a, b)| acc | (a ^ b) ) == 0
+    a.bytes()
+        .zip(b.bytes())
+        .fold(0, |acc, (a, b)| acc | (a ^ b))
+        == 0
 }
 
 fn main() {
     rocket::ignite()
         .mount("/", routes![index])
         .attach(AdHoc::on_attach("Tokens", |rocket| {
-            let tokens_config: Vec<rocket::config::Value> = rocket.config()
-                .get_slice("tokens").unwrap().clone();
-                //.unwrap_or(&vec![rocket::config::Value::String("".to_string())]);
+            let tokens_config: Vec<rocket::config::Value> =
+                rocket.config().get_slice("tokens").unwrap().clone();
             let mut tokens: Vec<Token> = Vec::new();
             for t in tokens_config {
                 println!("{}", t);
