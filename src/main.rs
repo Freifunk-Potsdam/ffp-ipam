@@ -2,19 +2,22 @@
 
 #[macro_use]
 extern crate rocket;
+#[macro_use]
+extern crate rocket_contrib;
 
 mod auth;
 
 use auth::Token;
+use rocket_contrib::json::{Json, JsonValue};
 
 #[get("/")]
-fn index(_t: Token) -> &'static str {
-    "Hello, world!"
+fn get(_t: Token) -> JsonValue {
+    json!({"name": "value"})
 }
 
 fn main() {
     rocket::ignite()
-        .mount("/", routes![index])
+        .mount("/ip4", routes![get])
         .attach(auth::auth_fairing())
         .launch();
 }
