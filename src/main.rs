@@ -9,6 +9,7 @@ use rocket::request::{self, Request, FromRequest};
 use rocket::http::Status;
 use rocket::Outcome;
 use rocket::State;
+use rocket::fairing::AdHoc;
 
 
 struct Token(String);
@@ -25,13 +26,12 @@ impl<'a, 'r> FromRequest<'a, 'r> for Token {
 
     fn from_request(request: &'a Request<'r>) -> request::Outcome<Self, Self::Error> {
         let keys: Vec<_> = request.headers().get("x-api-key").collect();
-        // let tokens = request.guard::<State<Vec<Token>>>().unwrap();
-        let tokens = vec!["04345eb554c25cc5d7e02fb5e605ccf7af185e92e4237617abd3f43569abf5ae"];
+        let tokens = request.guard::<State<Vec<Token>>>().unwrap().inner();
         match keys.len() {
             0 => Outcome::Failure((Status::BadRequest, ApiKeyError::Missing)),
             1 => {
                 for t in tokens {
-                    if ct_compare(&t, keys[0]) {
+                    if ct_compare(&t.0, keys[0]) {
                         return Outcome::Success(Token(keys[0].to_string()))
                     }
                 }
@@ -58,15 +58,19 @@ fn ct_compare(a: &str, b: &str) -> bool {
 }
 
 fn main() {
-    let tokens: Vec<String> = {
-        let mut res = Vec::new();
-        let bf = BufReader::new(File::open("tokens").unwrap());
-        for line in bf.lines() {
-            res.push(line.unwrap());
-        }
-        println!("Tokens in use: {:?}", res);
-        res
-    };
+    rocket::ignite()
+        .mount("/", routes![index])
+        .attach(AdHoc::on_attach("Tokens", |rocket| {
+            let tokens_config: Vec<rocket::config::Value> = rocket.config()
+                .get_slice("tokens").unwrap().clone();
+                //.unwrap_or(&vec![rocket::config::Value::String("".to_string())]);
+            let mut tokens: Vec<Token> = Vec::new();
+            for t in tokens_config {
+                println!("{}", t);
+                tokens.push(Token(t.as_str().unwrap().to_string()));
+            }
 
-    rocket::ignite().mount("/", routes![index]).manage(tokens).launch();
+            Ok(rocket.manage(tokens))
+        }))
+        .launch();
 }
