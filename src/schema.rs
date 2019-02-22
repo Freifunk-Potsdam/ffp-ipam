@@ -1,6 +1,6 @@
 table! {
-    ip4s (id) {
-        id -> Inet,
+    ip4s (ip) {
+        ip -> Inet,
         node_name -> Varchar,
         location -> Varchar,
         contact -> Varchar,

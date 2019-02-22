@@ -40,10 +40,10 @@ fn ct_compare(a: &str, b: &str) -> bool {
         return false;
     }
 
-    a.bytes()
-        .zip(b.bytes())
-        .fold(0, |acc, (a, b)| acc | (a ^ b))
-        == 0
+    a.bytes().zip(b.bytes()).fold(
+        0,
+        |acc, (a, b)| acc | (a ^ b),
+    ) == 0
 }
 
 pub fn auth_fairing() -> AdHoc {
