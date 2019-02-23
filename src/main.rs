@@ -28,7 +28,7 @@ use std::collections::HashMap;
 #[database("pg_db")]
 struct DbConn(rocket_diesel::PgConnection);
 
-#[derive(Queryable, AsChangeset, Serialize, Deserialize, Debug)]
+#[derive(Queryable, AsChangeset, Insertable, Serialize, Deserialize, Debug)]
 pub struct Ip4 {
     pub ip: IpNetwork,
     pub node_name: String,
@@ -61,9 +61,18 @@ fn get(_t: Token, conn: DbConn) -> JsonValue {
     JsonValue(serde_json::to_value(&res_folded).unwrap())
 }
 
+#[post("/register", format = "json", data = "<msg>")]
+fn put(_t: Token, conn: DbConn, msg: Json<Ip4>) -> Option<JsonValue> {
+    diesel::insert_into(ip4s)
+        .values(msg.into_inner())
+        .execute(&conn.0)
+        .unwrap();
+    Some(json!({"status": "success"}))
+}
+
 fn main() {
     rocket::ignite()
-        .mount("/ip4", routes![get])
+        .mount("/ip4", routes![get, put])
         .attach(DbConn::fairing())
         .attach(auth::auth_fairing())
         .launch();
