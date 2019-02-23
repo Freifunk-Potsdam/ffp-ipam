@@ -9,24 +9,24 @@ extern crate diesel;
 extern crate serde;
 #[macro_use]
 extern crate serde_derive;
-extern crate serde_json;
 extern crate ipnetwork;
+extern crate serde_json;
 
 mod auth;
 pub mod schema;
 
-use auth::Token;
-use rocket_contrib::json::{Json, JsonValue};
 use self::diesel::prelude::*;
+use auth::Token;
+use diesel::pg::PgConnection;
+use ipnetwork::IpNetwork;
+use rocket_contrib::databases::diesel as rocket_diesel;
+use rocket_contrib::json::{Json, JsonValue};
 use schema::ip4s;
 use schema::ip4s::dsl::*;
-use diesel::pg::PgConnection;
-use rocket_contrib::databases::diesel as rocket_diesel;
-use ipnetwork::IpNetwork;
+use std::collections::HashMap;
 
 #[database("pg_db")]
 struct DbConn(rocket_diesel::PgConnection);
-
 
 #[derive(Queryable, AsChangeset, Serialize, Deserialize, Debug)]
 pub struct Ip4 {
@@ -36,13 +36,29 @@ pub struct Ip4 {
     pub contact: String,
 }
 
+#[derive(Serialize, Deserialize, Debug)]
+pub struct Ip4Val {
+    pub node_name: String,
+    pub location: String,
+    pub contact: String,
+}
+
 #[get("/")]
 fn get(_t: Token, conn: DbConn) -> JsonValue {
     let res = ip4s.load::<Ip4>(&conn.0).unwrap();
-    println!("{:?}", res);
-    // json!({"name": "value"})
-    JsonValue(serde_json::to_value(&res).unwrap())
-    // JsonValue(res)
+    // Make the primary key 'ip' the key of a JSON dict
+    let res_folded = res.iter().fold(HashMap::new(), |mut acc, x| {
+        acc.insert(
+            x.ip,
+            Ip4Val {
+                node_name: x.node_name.clone(),
+                location: x.location.clone(),
+                contact: x.contact.clone(),
+            },
+        );
+        acc
+    });
+    JsonValue(serde_json::to_value(&res_folded).unwrap())
 }
 
 fn main() {
