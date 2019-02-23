@@ -27,7 +27,7 @@ impl<'a, 'r> FromRequest<'a, 'r> for Token {
                         return Outcome::Success(Token(keys[0].to_string()));
                     }
                 }
-                Outcome::Failure((Status::BadRequest, ApiKeyError::Invalid))
+                Outcome::Failure((Status::Forbidden, ApiKeyError::Invalid))
             }
             _ => Outcome::Failure((Status::BadRequest, ApiKeyError::BadCount)),
         }
