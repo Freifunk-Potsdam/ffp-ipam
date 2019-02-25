@@ -1,6 +1,0 @@
-CREATE TABLE ip4s (
-	  ip INET PRIMARY KEY,
-	  node_name VARCHAR NOT NULL,
-	  location VARCHAR NOT NULL,
-	  contact VARCHAR NOT NULL
-)

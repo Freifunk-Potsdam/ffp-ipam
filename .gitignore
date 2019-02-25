@@ -2,3 +2,4 @@
 **/*.rs.bk
 secrets
 *.swp
+db.sqlite

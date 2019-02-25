@@ -9,7 +9,6 @@ extern crate diesel;
 extern crate serde;
 #[macro_use]
 extern crate serde_derive;
-extern crate ipnetwork;
 extern crate serde_json;
 
 mod auth;
@@ -18,7 +17,6 @@ pub mod schema;
 use self::diesel::prelude::*;
 use auth::Token;
 use diesel::result::{DatabaseErrorKind, Error};
-use ipnetwork::IpNetwork;
 use rocket::http::{ContentType, Status};
 use rocket::request::Request;
 use rocket::response;
@@ -29,12 +27,12 @@ use schema::ip4s;
 use schema::ip4s::dsl::*;
 use std::collections::HashMap;
 
-#[database("pg_db")]
-struct DbConn(rocket_diesel::PgConnection);
+#[database("sqlite_database")]
+struct DbConn(rocket_diesel::SqliteConnection);
 
-#[derive(Queryable, AsChangeset, Insertable, Serialize, Deserialize, Debug)]
+#[derive(Queryable, Insertable, Serialize, Deserialize, Debug)]
 pub struct Ip4 {
-    pub ip: IpNetwork,
+    pub ip: String,
     pub node_name: String,
     pub location: String,
     pub contact: String,
@@ -45,7 +43,7 @@ fn get(_t: Token, conn: DbConn) -> JsonValue {
     let res = ip4s.load::<Ip4>(&conn.0).unwrap();
     // Make the primary key 'ip' the key of a JSON dict
     let res_folded = res.iter().fold(HashMap::new(), |mut acc, x| {
-        acc.insert(x.ip, {
+        acc.insert(&x.ip, {
             let mut res = HashMap::new();
             res.insert("node_name", x.node_name.clone());
             res.insert("location", x.location.clone());
@@ -79,7 +77,7 @@ fn put(_t: Token, conn: DbConn, msg: Json<Ip4>) -> ApiResponse {
     match ip4 {
         ip4 => match diesel::insert_into(ip4s).values(ip4).execute(&conn.0) {
             Ok(_) => ApiResponse {
-                json: json!({"status": "success"}),
+                json: json!({"status": "Success"}),
                 status: Status::Ok,
             },
             Err(Error::DatabaseError(DatabaseErrorKind::UniqueViolation, _)) => ApiResponse {
