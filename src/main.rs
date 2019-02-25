@@ -41,13 +41,6 @@ pub struct Ip4 {
     pub contact: String,
 }
 
-#[derive(Serialize, Deserialize, Debug)]
-pub struct Ip4Val {
-    pub node_name: String,
-    pub location: String,
-    pub contact: String,
-}
-
 #[get("/")]
 fn get(_t: Token, conn: DbConn) -> JsonValue {
     let res = ip4s.load::<Ip4>(&conn.0).unwrap();
@@ -55,10 +48,12 @@ fn get(_t: Token, conn: DbConn) -> JsonValue {
     let res_folded = res.iter().fold(HashMap::new(), |mut acc, x| {
         acc.insert(
             x.ip,
-            Ip4Val {
-                node_name: x.node_name.clone(),
-                location: x.location.clone(),
-                contact: x.contact.clone(),
+            { 
+                let mut res = HashMap::new();
+                res.insert("node_name", x.node_name.clone());
+                res.insert("location", x.location.clone());
+                res.insert("contact", x.contact.clone());
+                res
             },
         );
         acc
