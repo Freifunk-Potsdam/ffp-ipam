@@ -13,6 +13,8 @@ extern crate serde_json;
 
 mod auth;
 pub mod schema;
+#[cfg(test)]
+mod tests;
 
 use self::diesel::prelude::*;
 use auth::Token;
@@ -21,6 +23,7 @@ use rocket::http::{ContentType, Status};
 use rocket::request::Request;
 use rocket::response;
 use rocket::response::{Responder, Response};
+use rocket::Rocket;
 use rocket_contrib::databases::diesel as rocket_diesel;
 use rocket_contrib::json::{Json, JsonValue};
 use schema::ip4s;
@@ -96,10 +99,12 @@ fn put(_t: Token, conn: DbConn, msg: Json<Ip4>) -> ApiResponse {
     }
 }
 
-fn main() {
+fn rocket() -> Rocket {
     rocket::ignite()
         .mount("/ip4", routes![get, put])
         .attach(DbConn::fairing())
-        .attach(auth::auth_fairing())
-        .launch();
+}
+
+fn main() {
+    rocket().attach(auth::auth_fairing()).launch();
 }

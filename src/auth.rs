@@ -59,3 +59,7 @@ pub fn auth_fairing() -> AdHoc {
         Ok(rocket.manage(tokens))
     })
 }
+
+pub fn auth_fairing_for_testing(tokens: Vec<Token>) -> AdHoc {
+    AdHoc::on_attach("Tokens", |rocket| Ok(rocket.manage(tokens)))
+}
