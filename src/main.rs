@@ -10,6 +10,7 @@ extern crate serde;
 #[macro_use]
 extern crate serde_derive;
 extern crate serde_json;
+extern crate ipnet;
 
 mod auth;
 pub mod schema;
@@ -27,6 +28,7 @@ pub struct DbConn(rocket_diesel::SqliteConnection);
 fn rocket() -> Rocket {
     rocket::ignite()
         .mount("/ip4", routes![ip4::get, ip4::put])
+        .attach(ip4::ip4_fairing())
         .attach(DbConn::fairing())
 }
 
