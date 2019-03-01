@@ -5,6 +5,7 @@ use auth::Token;
 use rocket::http::{ContentType, Status, Header};
 use rocket::local::Client;
 
+#[cfg(test)]
 fn testing_client() -> Client {
     let testing_rocket = super::rocket()
         .attach(auth::auth_fairing_for_testing(vec![Token(
