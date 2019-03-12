@@ -65,7 +65,7 @@ pub struct Ip4Request {
 
 pub type Ip4Dict = HashMap<Ip4, Ip4Data>;
 
-use git2::{Commit, Oid, Repository, Signature, Tree};
+use git2::{Commit, Index, Oid, Repository, Signature, Tree};
 use rocket::State;
 #[post("/register", format = "application/json", data = "<msg>")]
 pub fn put(
@@ -107,8 +107,11 @@ pub fn put(
 
     println!("Writing to file ip4.json...");
     let mut ip4_dict: Ip4Dict = {
-        let json_file: File = File::open(&repo_path.join("ip4.json")).unwrap();
-        serde_json::from_reader(&json_file).unwrap()
+        if let Ok(json_file) = File::open(&repo_path.join("ip4.json")) {
+            serde_json::from_reader(&json_file).unwrap()
+        } else {
+            HashMap::new()
+        }
     };
 
     if ip4_dict.contains_key(&ip4) {
@@ -117,11 +120,14 @@ pub fn put(
             status: Status::UnprocessableEntity,
         };
     }
-    ip4_dict.insert(ip4, Ip4Data {
-        node_name: ip4_request.node_name,
-        location: ip4_request.location,
-        contact: ip4_request.contact,
-    });
+    ip4_dict.insert(
+        ip4,
+        Ip4Data {
+            node_name: ip4_request.node_name,
+            location: ip4_request.location,
+            contact: ip4_request.contact,
+        },
+    );
 
     // Now we need the lock and should not return without freeing the lock!
     repo::aquire_lock(&repo_path);
@@ -133,23 +139,30 @@ pub fn put(
     println!("Trying to commit...");
     let repo = repo::get_repo(repo_path.clone()).unwrap();
 
-    repo.index().unwrap().add_path(&Path::new("ip4.json")).unwrap();
+    let tree_id = {
+        let mut index: Index = repo.index().unwrap();
+        let path = Path::new("ip4.json");
+        index.add_path(&path).unwrap();
+        index.write().unwrap();
+        index.write_tree().unwrap()
+    };
+    println!("tree_id is {}", &tree_id);
+
+    let tree: Tree = repo.find_tree(tree_id).unwrap();
 
     let sig = Signature::now("John Doe", "john.doe@john.doe").unwrap();
-    let head_oid: Oid = repo.head().unwrap().target().unwrap();
-    let head_commit: Commit = repo.find_commit(head_oid).unwrap();
-    println!("Head commit is {:?}", &head_commit);
-    let head_tree: Tree = head_commit.tree().unwrap();
-    repo.commit(
-        Some("HEAD"),
-        &sig,
-        &sig,
-        "My message",
-        // tree, Commit, Oid
-        &head_tree,
-        &vec![&head_commit],
-    )
-    .unwrap();
+    let head_commit;
+    let parents: Vec<&Commit> = if let Ok(head_ref) = repo.head() {
+        let head_oid = head_ref.target().unwrap();
+        head_commit = repo.find_commit(head_oid).unwrap();
+        println!("Head commit is {:?}", &head_commit);
+        vec![&head_commit]
+    } else {
+        // in this case, we are creating the first commit so there are no parents
+        Vec::new()
+    };
+    repo.commit(Some("HEAD"), &sig, &sig, "My message", &tree, &parents)
+        .unwrap();
     repo::free_lock(&repo_path);
 
     ApiResponse {
