@@ -7,7 +7,7 @@ use rocket::request::Request;
 use rocket::response;
 use rocket::response::{Responder, Response};
 use rocket_contrib::json::{Json, JsonValue};
-use std::collections::HashMap;
+use std::collections::{HashMap, BTreeMap};
 use std::fs::File;
 use std::path::Path;
 
@@ -61,7 +61,7 @@ pub struct Ip4Request {
     pub contact: String,
 }
 
-pub type Ip4Dict = HashMap<Ip4, Ip4Data>;
+pub type Ip4Dict = BTreeMap<Ip4, Ip4Data>;
 
 use git2::{Commit, Index, Oid, Repository, Signature, Tree};
 use rocket::State;
@@ -108,7 +108,7 @@ pub fn put(
         if let Ok(json_file) = File::open(&repo_path.join("ip4.json")) {
             serde_json::from_reader(&json_file).unwrap()
         } else {
-            HashMap::new()
+            BTreeMap::new()
         }
     };
 
