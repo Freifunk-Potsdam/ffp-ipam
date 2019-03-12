@@ -10,6 +10,8 @@ serde_derive = "*"
 serde_json = "*"
 ipnetwork = "*"
 ipnet = "*"
+git2 = "*"
+fs2 = "*"
 
 [dependencies.rocket_contrib]
 version = "0.4.0"

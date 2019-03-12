@@ -1,5 +1,9 @@
 use auth::Token;
 use diesel::result::{DatabaseErrorKind, Error};
+use diesel::RunQueryDsl;
+use ipnet::Ipv4Net;
+use repo;
+use repo::RepoPath;
 use rocket::http::{ContentType, Status};
 use rocket::request::Request;
 use rocket::response;
@@ -8,9 +12,8 @@ use rocket_contrib::json::{Json, JsonValue};
 use schema::ip4s;
 use schema::ip4s::dsl::*;
 use std::collections::HashMap;
-use diesel::RunQueryDsl;
-use DbConn;
-use ipnet::Ipv4Net;
+use std::fs::File;
+use std::path::Path;
 
 #[derive(Queryable, Insertable, Serialize, Deserialize, Debug)]
 pub struct Ip4 {
@@ -21,20 +24,19 @@ pub struct Ip4 {
 }
 
 #[get("/")]
-pub fn get(_t: Token, conn: DbConn) -> JsonValue {
-    let res = ip4s.load::<Ip4>(&conn.0).unwrap();
-    // Make the primary key 'ip' the key of a JSON dict
-    let res_folded = res.iter().fold(HashMap::new(), |mut acc, x| {
-        acc.insert(&x.ip, {
-            let mut res = HashMap::new();
-            res.insert("node_name", x.node_name.clone());
-            res.insert("location", x.location.clone());
-            res.insert("contact", x.contact.clone());
-            res
-        });
-        acc
-    });
-    JsonValue(serde_json::to_value(&res_folded).unwrap())
+pub fn get(_t: Token, repo_path: State<RepoPath>) -> JsonValue {
+    // TODO: I'm not sure wether this is impossible to conflict with a /register request
+    let path = {
+        let mut path = repo_path.0.to_path_buf();
+        path.push("ip4.json");
+        path
+    };
+    let mut json_file = File::open(&path).unwrap();
+    let mut json_str = String::new();
+    use std::io::Read;
+    json_file.read_to_string(&mut json_str).unwrap();
+
+    JsonValue(serde_json::from_str(&json_str).unwrap())
 }
 
 #[derive(Debug)]
@@ -52,47 +54,90 @@ impl<'r> Responder<'r> for ApiResponse {
     }
 }
 
+use git2::{Commit, Oid, Repository, Signature, Tree};
 use rocket::State;
 #[post("/register", format = "application/json", data = "<msg>")]
-pub fn put(_t: Token, conn: DbConn, ip4_ranges: State<Ip4Ranges>, msg: Json<Ip4>) -> ApiResponse {
+pub fn put(
+    _t: Token,
+    repo_path: State<RepoPath>,
+    ip4_ranges: State<Ip4Ranges>,
+    msg: Json<Ip4>,
+) -> ApiResponse {
     let ip4: Ip4 = msg.into_inner();
+    let repo_path = repo_path.0.to_path_buf();
     println!("{:?}", ip4);
     let ip4_parsed: Ipv4Net = match ip4.ip.parse::<Ipv4Net>() {
         Err(e) => {
             return ApiResponse {
-                json: json!({"error": format!("Malformed IPv4 Address {}. Please supply of the form 'x.x.x.x/32' ", &ip4.ip)}),
+                json: json!({
+                    "error":
+                        format!(
+                            "Malformed IPv4 Address {}. Please supply of the form 'x.x.x.x/32' ",
+                            &ip4.ip
+                        )
+                }),
                 status: Status::UnprocessableEntity,
             };
-        },
+        }
         Ok(i) => i,
-        };
+    };
     if !ip4_ranges.contain(&ip4_parsed) {
         return ApiResponse {
-            json: json!({"error": format!("IPv4 address is in unsupported range. Please choose one in {:?}.", ip4_ranges)}),
+            json: json!({
+                "error":
+                    format!(
+                        "IPv4 address is in unsupported range. Please choose one in {:?}.",
+                        ip4_ranges
+                    )
+            }),
             status: Status::UnprocessableEntity,
         };
     }
 
-    match ip4 {
-        ip4 => match diesel::insert_into(ip4s).values(ip4).execute(&conn.0) {
-            Ok(_) => ApiResponse {
-                json: json!({"status": "Success"}),
-                status: Status::Ok,
-            },
-            Err(Error::DatabaseError(DatabaseErrorKind::UniqueViolation, _)) => ApiResponse {
-                json: json!({"error": "IP address already taken. Please choose a different one."}),
-                status: Status::UnprocessableEntity,
-            },
-            Err(err) => ApiResponse {
-                json: json!({
-                    "error": json!({
-                        "error": format!("Halp! An unhandled DB error happened: {:?}", err)
-                    })
-                }),
-                status: Status::InternalServerError,
-            },
-        },
+    println!("Trying to commit...");
+    // repo::aquire_lock(&repo_path);
+    let repo = repo::get_repo(repo_path.clone()).unwrap();
+    let sig = Signature::now("John Doe", "john.doe@john.doe").unwrap();
+    let head_oid: Oid = repo.head().unwrap().target().unwrap();
+    let head_commit: Commit = repo.find_commit(head_oid).unwrap();
+    println!("Head commit is {:?}", &head_commit);
+    let head_tree: Tree = head_commit.tree().unwrap();
+    repo.commit(
+        Some("HEAD"),
+        &sig,
+        &sig,
+        "My message",
+        // tree, Commit, Oid
+        &head_tree,
+        &vec![&head_commit],
+    )
+    .unwrap();
+    // repo::free_lock(&repo_path);
+
+    ApiResponse {
+        json: json!({"status": "Success"}),
+        status: Status::Ok,
     }
+    // match ip4 {
+    //     ip4 => match diesel::insert_into(ip4s).values(ip4).execute(&conn.0) {
+    //         Ok(_) => ApiResponse {
+    //             json: json!({"status": "Success"}),
+    //             status: Status::Ok,
+    //         },
+    //         Err(Error::DatabaseError(DatabaseErrorKind::UniqueViolation, _)) => ApiResponse {
+    //             json: json!({"error": "IP address already taken. Please choose a different one."}),
+    //             status: Status::UnprocessableEntity,
+    //         },
+    //         Err(err) => ApiResponse {
+    //             json: json!({
+    //                 "error": json!({
+    //                     "error": format!("Halp! An unhandled DB error happened: {:?}", err)
+    //                 })
+    //             }),
+    //             status: Status::InternalServerError,
+    //         },
+    //     },
+    // }
 }
 
 #[derive(Debug)]
@@ -101,9 +146,9 @@ pub struct Ip4Ranges(Vec<Ipv4Net>);
 impl Ip4Ranges {
     fn contain(&self, ip4: &Ipv4Net) -> bool {
         for range in &self.0 {
-           if range.contains(ip4) {
-               return true;
-           }
+            if range.contains(ip4) {
+                return true;
+            }
         }
         // No network contains the IP
         false
@@ -121,7 +166,9 @@ pub fn ip4_fairing() -> AdHoc {
                 println!("{}", ip4_str);
                 let ip4: Ipv4Net = match ip4_str.as_str().unwrap().parse() {
                     Ok(ip4) => ip4,
-                    Err(_e) => panic!("Please supply valid IPv4 ranges of the form '192.168.0.0/24, 10.0.0.0/16'"),
+                    Err(_e) => panic!(
+                        "Please supply valid IPv4 ranges of the form '192.168.0.0/24, 10.0.0.0/16'"
+                    ),
                 };
                 res.0.push(ip4);
             }
@@ -131,4 +178,3 @@ pub fn ip4_fairing() -> AdHoc {
         Ok(rocket.manage(ip4_ranges))
     })
 }
-

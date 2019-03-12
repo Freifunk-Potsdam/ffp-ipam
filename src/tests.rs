@@ -2,13 +2,12 @@
 
 use auth;
 use auth::Token;
-use rocket::http::{ContentType, Status, Header};
+use rocket::http::{ContentType, Header, Status};
 use rocket::local::Client;
 
 #[cfg(test)]
 fn testing_client() -> Client {
-    let testing_rocket = super::rocket()
-        .attach(auth::auth_fairing_for_testing(vec![Token(
+    let testing_rocket = super::rocket().attach(auth::auth_fairing_for_testing(vec![Token(
         "123".to_string(),
     )]));
     Client::new(testing_rocket).expect("Rocket client")

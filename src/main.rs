@@ -9,27 +9,27 @@ extern crate diesel;
 extern crate serde;
 #[macro_use]
 extern crate serde_derive;
-extern crate serde_json;
+extern crate git2;
 extern crate ipnet;
+extern crate serde_json;
 
 mod auth;
+mod ip4;
+mod repo;
 pub mod schema;
 #[cfg(test)]
 mod tests;
-mod ip4;
 
-
+use git2::Repository;
 use rocket::Rocket;
 use rocket_contrib::databases::diesel as rocket_diesel;
-
-#[database("sqlite_database")]
-pub struct DbConn(rocket_diesel::SqliteConnection);
+use std::sync::Mutex;
 
 fn rocket() -> Rocket {
     rocket::ignite()
         .mount("/ip4", routes![ip4::get, ip4::put])
         .attach(ip4::ip4_fairing())
-        .attach(DbConn::fairing())
+        .attach(repo::repo_path_fairing())
 }
 
 fn main() {

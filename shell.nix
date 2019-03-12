@@ -4,5 +4,7 @@ pkgs.mkShell {
       rustup
       mysql
       sqlite
+      pkgconfig
+      openssl
     ];
 }
