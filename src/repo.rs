@@ -33,11 +33,10 @@ pub fn get_repo(path: PathBuf) -> Result<Repository, String> {
 /// Aquire lock on repo. This should be atomic and creates a file ./lock in the repo.
 pub fn aquire_lock(path: &Path) -> Result<(), String> {
     let path = {
-        let mut p = path.to_path_buf();
-        p.push("lock");
+        let mut p = path.join("lock");
         p
     };
-    match OpenOptions::new().write(true).create_new(true).open("test") {
+    match OpenOptions::new().write(true).create_new(true).open(&path) {
         Ok(_) => Ok(()),
         Err(_) => Err("Could not aquire lock.".to_string()),
     }
@@ -46,8 +45,7 @@ pub fn aquire_lock(path: &Path) -> Result<(), String> {
 /// Free the lock on the repo. Due to https://doc.rust-lang.org/std/fs/fn.remove_file.html there is no guarantee, that the lockfile is removed immediately, but imho this is not necessary, as long as it does not take ages..
 pub fn free_lock(path: &Path) -> Result<(), String> {
     let path = {
-        let mut p = path.to_path_buf();
-        p.push("lock");
+        let mut p = path.join("lock");
         p
     };
     match std::fs::remove_file(path) {
