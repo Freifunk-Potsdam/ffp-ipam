@@ -258,6 +258,9 @@ dependencies = [
 name = "ipnet"
 version = "2.0.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
+dependencies = [
+ "serde 1.0.88 (registry+https://github.com/rust-lang/crates.io-index)",
+]
 
 [[package]]
 name = "ipnetwork"
@@ -701,6 +704,9 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 name = "serde"
 version = "1.0.88"
 source = "registry+https://github.com/rust-lang/crates.io-index"
+dependencies = [
+ "serde_derive 1.0.88 (registry+https://github.com/rust-lang/crates.io-index)",
+]
 
 [[package]]
 name = "serde_derive"

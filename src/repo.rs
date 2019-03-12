@@ -30,7 +30,7 @@ pub fn get_repo(path: PathBuf) -> Result<Repository, String> {
     }
 }
 
-/// Aquire lock on repo. This should be atomic.
+/// Aquire lock on repo. This should be atomic and creates a file ./lock in the repo.
 pub fn aquire_lock(path: &Path) -> Result<(), String> {
     let path = {
         let mut p = path.to_path_buf();

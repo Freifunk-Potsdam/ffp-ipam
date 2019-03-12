@@ -5,11 +5,11 @@ authors = ["Justin Humm <justin.humm@posteo.de>"]
 
 [dependencies]
 rocket = "0.4.0"
-serde = "*"
+serde = { version = "*", features = ["derive"] }
 serde_derive = "*"
 serde_json = "*"
 ipnetwork = "*"
-ipnet = "*"
+ipnet = { version = "*", features = ["serde"] }
 git2 = "*"
 fs2 = "*"
 

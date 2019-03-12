@@ -9,9 +9,9 @@ extern crate diesel;
 extern crate serde;
 #[macro_use]
 extern crate serde_derive;
+extern crate serde_json;
 extern crate git2;
 extern crate ipnet;
-extern crate serde_json;
 
 mod auth;
 mod ip4;

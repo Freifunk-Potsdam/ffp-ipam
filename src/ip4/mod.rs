@@ -9,15 +9,14 @@ use rocket::request::Request;
 use rocket::response;
 use rocket::response::{Responder, Response};
 use rocket_contrib::json::{Json, JsonValue};
-use schema::ip4s;
-use schema::ip4s::dsl::*;
 use std::collections::HashMap;
 use std::fs::File;
 use std::path::Path;
 
-#[derive(Queryable, Insertable, Serialize, Deserialize, Debug)]
-pub struct Ip4 {
-    pub ip: String,
+pub type Ip4 = Ipv4Net;
+
+#[derive(Serialize, Deserialize, Debug)]
+pub struct Ip4Data {
     pub node_name: String,
     pub location: String,
     pub contact: String,
@@ -26,6 +25,7 @@ pub struct Ip4 {
 #[get("/")]
 pub fn get(_t: Token, repo_path: State<RepoPath>) -> JsonValue {
     // TODO: I'm not sure wether this is impossible to conflict with a /register request
+    // maybe the file can be read, while /register is writing to it?
     let path = {
         let mut path = repo_path.0.to_path_buf();
         path.push("ip4.json");
@@ -54,6 +54,17 @@ impl<'r> Responder<'r> for ApiResponse {
     }
 }
 
+/// Struct that is only used when someone wants to register an IPv4
+#[derive(Serialize, Deserialize, Debug)]
+pub struct Ip4Request {
+    pub ip4: String,
+    pub node_name: String,
+    pub location: String,
+    pub contact: String,
+}
+
+pub type Ip4Dict = HashMap<Ip4, Ip4Data>;
+
 use git2::{Commit, Oid, Repository, Signature, Tree};
 use rocket::State;
 #[post("/register", format = "application/json", data = "<msg>")]
@@ -61,19 +72,19 @@ pub fn put(
     _t: Token,
     repo_path: State<RepoPath>,
     ip4_ranges: State<Ip4Ranges>,
-    msg: Json<Ip4>,
+    msg: Json<Ip4Request>,
 ) -> ApiResponse {
-    let ip4: Ip4 = msg.into_inner();
+    let ip4_request: Ip4Request = msg.into_inner();
     let repo_path = repo_path.0.to_path_buf();
-    println!("{:?}", ip4);
-    let ip4_parsed: Ipv4Net = match ip4.ip.parse::<Ipv4Net>() {
+    println!("{:?}", ip4_request);
+    let ip4: Ipv4Net = match ip4_request.ip4.parse::<Ipv4Net>() {
         Err(e) => {
             return ApiResponse {
                 json: json!({
                     "error":
                         format!(
                             "Malformed IPv4 Address {}. Please supply of the form 'x.x.x.x/32' ",
-                            &ip4.ip
+                            &ip4_request.ip4
                         )
                 }),
                 status: Status::UnprocessableEntity,
@@ -81,7 +92,7 @@ pub fn put(
         }
         Ok(i) => i,
     };
-    if !ip4_ranges.contain(&ip4_parsed) {
+    if !ip4_ranges.contain(&ip4) {
         return ApiResponse {
             json: json!({
                 "error":
@@ -94,9 +105,36 @@ pub fn put(
         };
     }
 
+    println!("Writing to file ip4.json...");
+    let mut ip4_dict: Ip4Dict = {
+        let json_file: File = File::open(&repo_path.join("ip4.json")).unwrap();
+        serde_json::from_reader(&json_file).unwrap()
+    };
+
+    if ip4_dict.contains_key(&ip4) {
+        return ApiResponse {
+            json: json!({"error": "IP address already taken. Please choose a different one."}),
+            status: Status::UnprocessableEntity,
+        };
+    }
+    ip4_dict.insert(ip4, Ip4Data {
+        node_name: ip4_request.node_name,
+        location: ip4_request.location,
+        contact: ip4_request.contact,
+    });
+
+    // Now we need the lock and should not return without freeing the lock!
+    repo::aquire_lock(&repo_path);
+    {
+        let json_file: File = File::create(&repo_path.join("ip4.json")).unwrap();
+        println!("Writing to {:?}.", &json_file);
+        serde_json::to_writer_pretty(json_file, &ip4_dict).unwrap();
+    }
     println!("Trying to commit...");
-    // repo::aquire_lock(&repo_path);
     let repo = repo::get_repo(repo_path.clone()).unwrap();
+
+    repo.index().unwrap().add_path(&Path::new("ip4.json")).unwrap();
+
     let sig = Signature::now("John Doe", "john.doe@john.doe").unwrap();
     let head_oid: Oid = repo.head().unwrap().target().unwrap();
     let head_commit: Commit = repo.find_commit(head_oid).unwrap();
@@ -112,32 +150,12 @@ pub fn put(
         &vec![&head_commit],
     )
     .unwrap();
-    // repo::free_lock(&repo_path);
+    repo::free_lock(&repo_path);
 
     ApiResponse {
         json: json!({"status": "Success"}),
         status: Status::Ok,
     }
-    // match ip4 {
-    //     ip4 => match diesel::insert_into(ip4s).values(ip4).execute(&conn.0) {
-    //         Ok(_) => ApiResponse {
-    //             json: json!({"status": "Success"}),
-    //             status: Status::Ok,
-    //         },
-    //         Err(Error::DatabaseError(DatabaseErrorKind::UniqueViolation, _)) => ApiResponse {
-    //             json: json!({"error": "IP address already taken. Please choose a different one."}),
-    //             status: Status::UnprocessableEntity,
-    //         },
-    //         Err(err) => ApiResponse {
-    //             json: json!({
-    //                 "error": json!({
-    //                     "error": format!("Halp! An unhandled DB error happened: {:?}", err)
-    //                 })
-    //             }),
-    //             status: Status::InternalServerError,
-    //         },
-    //     },
-    // }
 }
 
 #[derive(Debug)]
