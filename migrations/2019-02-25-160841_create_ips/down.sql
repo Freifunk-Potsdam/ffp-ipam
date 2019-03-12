@@ -1,1 +1,0 @@
-DROP TABLE ip4s;

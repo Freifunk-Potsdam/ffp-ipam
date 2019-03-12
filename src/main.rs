@@ -4,8 +4,6 @@
 extern crate rocket;
 #[macro_use]
 extern crate rocket_contrib;
-#[macro_use]
-extern crate diesel;
 extern crate serde;
 #[macro_use]
 extern crate serde_derive;
@@ -16,13 +14,11 @@ extern crate serde_json;
 mod auth;
 mod ip4;
 mod repo;
-pub mod schema;
 #[cfg(test)]
 mod tests;
 
 use git2::Repository;
 use rocket::Rocket;
-use rocket_contrib::databases::diesel as rocket_diesel;
 use std::sync::Mutex;
 
 fn rocket() -> Rocket {

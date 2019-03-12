@@ -1,6 +1,4 @@
 use auth::Token;
-use diesel::result::{DatabaseErrorKind, Error};
-use diesel::RunQueryDsl;
 use ipnet::Ipv4Net;
 use repo;
 use repo::RepoPath;
@@ -78,7 +76,7 @@ pub fn put(
     let repo_path = repo_path.0.to_path_buf();
     println!("{:?}", ip4_request);
     let ip4: Ipv4Net = match ip4_request.ip4.parse::<Ipv4Net>() {
-        Err(e) => {
+        Err(_) => {
             return ApiResponse {
                 json: json!({
                     "error":
@@ -130,7 +128,7 @@ pub fn put(
     );
 
     // Now we need the lock and should not return without freeing the lock!
-    repo::aquire_lock(&repo_path);
+    repo::aquire_lock(&repo_path).unwrap();
     {
         let json_file: File = File::create(&repo_path.join("ip4.json")).unwrap();
         println!("Writing to {:?}.", &json_file);
@@ -151,7 +149,7 @@ pub fn put(
     let tree: Tree = repo.find_tree(tree_id).unwrap();
 
     let sig = Signature::now("John Doe", "john.doe@john.doe").unwrap();
-    let head_commit;
+    let head_commit: Commit;
     let parents: Vec<&Commit> = if let Ok(head_ref) = repo.head() {
         let head_oid = head_ref.target().unwrap();
         head_commit = repo.find_commit(head_oid).unwrap();
@@ -163,7 +161,7 @@ pub fn put(
     };
     repo.commit(Some("HEAD"), &sig, &sig, "My message", &tree, &parents)
         .unwrap();
-    repo::free_lock(&repo_path);
+    repo::free_lock(&repo_path).unwrap();
 
     ApiResponse {
         json: json!({"status": "Success"}),
