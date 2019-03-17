@@ -7,5 +7,3 @@ ip4_ranges = [
   "10.0.0.0/8",
 ]
 
-[global.databases.sqlite_database]
-url = "db/db.sqlite"
