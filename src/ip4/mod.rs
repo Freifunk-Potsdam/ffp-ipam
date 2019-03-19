@@ -24,12 +24,12 @@ pub struct Ip4Data {
 pub fn get(_t: Token, repo_path: State<RepoPath>) -> JsonValue {
     // TODO: I'm not sure wether this is impossible to conflict with a /register request
     // maybe the file can be read, while /register is writing to it?
-    let path = {
-        let mut path = repo_path.0.to_path_buf();
-        path.push("ip4.json");
-        path
+    let path = repo_path.0.to_path_buf().join("ip4.json");
+    let mut json_file = match File::open(&path) {
+        Ok(o) => o,
+        // if there is no file, return an empty object
+        Err(_) => { return json!({}); },
     };
-    let mut json_file = File::open(&path).unwrap();
     let mut json_str = String::new();
     use std::io::Read;
     json_file.read_to_string(&mut json_str).unwrap();
@@ -135,7 +135,7 @@ pub fn put(
         serde_json::to_writer_pretty(json_file, &ip4_dict).unwrap();
     }
     println!("Trying to commit...");
-    let repo = repo::get_repo(repo_path.clone()).unwrap();
+    let repo = repo::get_repo(repo_path.clone()).expect(&format!("get_repo() failed with path {:?}", repo_path));
 
     let tree_id = {
         let mut index: Index = repo.index().unwrap();
