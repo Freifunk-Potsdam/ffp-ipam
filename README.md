@@ -17,7 +17,7 @@ curl https://ipam.erictapen.name/ip4 \
 curl https://ipam.erictapen.name/ip4/register \
  -H 'x-api-key: ThisIsNotSecretYet' \
  -H 'Content-Type: application/json' \
- --data '{ "ip4": "192.168.0.1/32", "contact": "lol", "location": "lol", "node_name": "lol" }'
+ --data '{ "ip4": "192.168.0.1/32", "contact": "mail@freifunk-potsdam.de", "location": "Behind the corner", "node_name": "mynodename" }'
 ```
 
 ## Building the daemon
