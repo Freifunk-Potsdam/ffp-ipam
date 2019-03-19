@@ -1,17 +1,16 @@
 use git2::Repository;
 use rocket::fairing::AdHoc;
 use std::fs::OpenOptions;
-use std::path::Path;
-use std::path::PathBuf;
+use std::path::{Path, PathBuf};
 use std::str::FromStr;
 
-pub struct RepoPath(pub &'static Path);
+#[derive(Debug, Deserialize)]
+pub struct RepoPath(pub PathBuf);
 
 /// fairing to put the path to the git repo inside a request.
-pub fn repo_path_fairing() -> AdHoc {
+pub fn repo_path_fairing(path: RepoPath) -> AdHoc {
     AdHoc::on_attach("Git repository", |rocket| {
-        let path = Path::new("./data");
-        let path = RepoPath(path);
+        println!("Using the repo path {:?}", path);
         Ok(rocket.manage(path))
     })
 }

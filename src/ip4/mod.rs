@@ -7,7 +7,7 @@ use rocket::request::Request;
 use rocket::response;
 use rocket::response::{Responder, Response};
 use rocket_contrib::json::{Json, JsonValue};
-use std::collections::{HashMap, BTreeMap};
+use std::collections::{BTreeMap, HashMap};
 use std::fs::File;
 use std::path::Path;
 
@@ -169,7 +169,7 @@ pub fn put(
     }
 }
 
-#[derive(Debug)]
+#[derive(Debug, Deserialize)]
 pub struct Ip4Ranges(Vec<Ipv4Net>);
 
 impl Ip4Ranges {
@@ -185,25 +185,9 @@ impl Ip4Ranges {
 }
 
 use rocket::fairing::AdHoc;
-pub fn ip4_fairing() -> AdHoc {
+pub fn ip4_fairing(ip4_ranges: Ip4Ranges) -> AdHoc {
     AdHoc::on_attach("IPv4 range", |rocket| {
-        let ip4_ranges: Vec<rocket::config::Value> =
-            rocket.config().get_slice("ip4_ranges").unwrap().clone();
-        let ip4_ranges: Ip4Ranges = {
-            let mut res: Ip4Ranges = Ip4Ranges(Vec::new());
-            for ip4_str in ip4_ranges {
-                println!("{}", ip4_str);
-                let ip4: Ipv4Net = match ip4_str.as_str().unwrap().parse() {
-                    Ok(ip4) => ip4,
-                    Err(_e) => panic!(
-                        "Please supply valid IPv4 ranges of the form '192.168.0.0/24, 10.0.0.0/16'"
-                    ),
-                };
-                res.0.push(ip4);
-            }
-            res
-        };
-
+        println!("Using the IPv4 ranges {:?}", ip4_ranges);
         Ok(rocket.manage(ip4_ranges))
     })
 }

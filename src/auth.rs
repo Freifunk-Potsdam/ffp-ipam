@@ -4,6 +4,7 @@ use rocket::request::{self, FromRequest, Request};
 use rocket::Outcome;
 use rocket::State;
 
+#[derive(Debug, Deserialize)]
 pub struct Token(pub String);
 
 #[derive(Debug)]
@@ -46,16 +47,9 @@ fn ct_compare(a: &str, b: &str) -> bool {
         == 0
 }
 
-pub fn auth_fairing() -> AdHoc {
+pub fn auth_fairing(tokens: Vec<Token>) -> AdHoc {
     AdHoc::on_attach("Tokens", |rocket| {
-        let tokens_config: Vec<rocket::config::Value> =
-            rocket.config().get_slice("tokens").unwrap().clone();
-        let mut tokens: Vec<Token> = Vec::new();
-        for t in tokens_config {
-            println!("{}", t);
-            tokens.push(Token(t.as_str().unwrap().to_string()));
-        }
-
+        println!("Using the authentication tokens {:?}", tokens);
         Ok(rocket.manage(tokens))
     })
 }

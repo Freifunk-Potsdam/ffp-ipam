@@ -2,6 +2,12 @@
 
 Hier ist noch alles im Bau. Ausprobieren auf eigene Gefahr ;)
 
+## Startup
+
+```terminal
+$ ffp-ipam --token "thisisnotsecret" --ip4-range "192.168.0.0/24" ./data
+```
+
 
 ## List
 
