@@ -1,5 +1,7 @@
 # IPv4 Address Management für Freifunk Potsdam
 
+[![built with nix](https://builtwithnix.org/badge.svg)](https://builtwithnix.org)
+
 ## API
 
 Wanna try it out? Current master is hosted for testing on `https://ipam.erictapen.name/`.
