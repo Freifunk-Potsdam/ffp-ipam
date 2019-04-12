@@ -1,15 +1,16 @@
-{ moz_overlay ? import (builtins.fetchTarball https://github.com/mozilla/nixpkgs-mozilla/archive/master.tar.gz)
-, nixpkgs ? import <nixpkgs> { overlays = [ moz_overlay ]; }
+{ moz_overlay ? builtins.fetchTarball https://github.com/mozilla/nixpkgs-mozilla/archive/master.tar.gz
+, nixpkgs ? <nixpkgs> 
 }:
 let
+  moz_nixpkgs = import "${nixpkgs}" { overlays = [ (import "${moz_overlay}") ]; };
   crates = (import ./Cargo.nix {
-    inherit (nixpkgs) lib buildPlatform buildRustCrateHelpers fetchgit;
-    buildRustCrate = nixpkgs.buildRustCrate.override {
+    inherit (moz_nixpkgs) lib buildPlatform buildRustCrateHelpers fetchgit;
+    buildRustCrate = moz_nixpkgs.buildRustCrate.override {
       # rustc = nixpkgs.latest.rustChannels.nightly.rust;
-      rustc = (nixpkgs.rustChannelOf { date = "2019-03-15"; channel = "nightly"; }).rust;
+      rustc = (moz_nixpkgs.rustChannelOf { date = "2019-03-15"; channel = "nightly"; }).rust;
     };
     cratesIO = import ./nix/crates-io.nix { 
-      inherit (nixpkgs) lib buildRustCrate buildRustCrateHelpers;
+      inherit (moz_nixpkgs) lib buildRustCrate buildRustCrateHelpers;
     };
   });
 in {
