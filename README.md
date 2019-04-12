@@ -1,6 +1,7 @@
 # IPv4 Address Management für Freifunk Potsdam
 
 [![built with nix](https://builtwithnix.org/badge.svg)](https://builtwithnix.org)
+[CI status](https://hydra.erictapen.name/jobset/ffp-ipam/master)
 
 ## API
 
