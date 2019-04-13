@@ -5,5 +5,8 @@ pkgs.mkShell {
       carnix
       pkgconfig
       openssl
+      pandoc
+      elmPackages.elm
+      elmPackages.elm-format
     ];
 }
