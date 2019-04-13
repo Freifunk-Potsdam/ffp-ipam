@@ -1,5 +1,4 @@
 /target
-**/*.rs.bk
+result*
 secrets
 *.swp
-db.sqlite
