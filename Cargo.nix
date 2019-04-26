@@ -82,7 +82,7 @@ rec {
     time = "0.1.42";
     url = "1.7.2";
   };
-  deps.curl_sys."0.4.17" = {
+  deps.curl_sys."0.4.18" = {
     libc = "0.2.51";
     libz_sys = "1.0.25";
     cc = "1.0.35";
@@ -100,13 +100,13 @@ rec {
   };
   deps.devise_core."0.2.0" = {
     bitflags = "1.0.4";
-    proc_macro2 = "0.4.27";
+    proc_macro2 = "0.4.28";
     quote = "0.6.12";
-    syn = "0.15.30";
+    syn = "0.15.33";
   };
   deps.docopt."1.1.0" = {
     lazy_static = "1.3.0";
-    regex = "1.1.5";
+    regex = "1.1.6";
     serde = "1.0.90";
     strsim = "0.9.1";
   };
@@ -121,7 +121,7 @@ rec {
     serde_derive = "1.0.90";
     serde_json = "1.0.39";
   };
-  deps.filetime."0.2.4" = {
+  deps.filetime."0.2.5" = {
     cfg_if = "0.1.7";
     redox_syscall = "0.1.54";
     libc = "0.2.51";
@@ -206,7 +206,7 @@ rec {
   deps.lazycell."1.2.1" = {};
   deps.libc."0.2.51" = {};
   deps.libgit2_sys."0.7.11" = {
-    curl_sys = "0.4.17";
+    curl_sys = "0.4.18";
     libc = "0.2.51";
     libssh2_sys = "0.2.11";
     libz_sys = "1.0.25";
@@ -278,7 +278,7 @@ rec {
   };
   deps.notify."4.0.10" = {
     bitflags = "1.0.4";
-    filetime = "0.2.4";
+    filetime = "0.2.5";
     libc = "0.2.51";
     walkdir = "2.2.7";
     inotify = "0.6.1";
@@ -307,23 +307,23 @@ rec {
     pear_codegen = "0.1.2";
   };
   deps.pear_codegen."0.1.2" = {
-    proc_macro2 = "0.4.27";
+    proc_macro2 = "0.4.28";
     quote = "0.6.12";
-    syn = "0.15.30";
+    syn = "0.15.33";
     version_check = "0.1.5";
     yansi = "0.4.0";
   };
   deps.percent_encoding."1.0.1" = {};
   deps.pkg_config."0.3.14" = {};
-  deps.proc_macro2."0.4.27" = {
+  deps.proc_macro2."0.4.28" = {
     unicode_xid = "0.1.0";
   };
   deps.quote."0.6.12" = {
-    proc_macro2 = "0.4.27";
+    proc_macro2 = "0.4.28";
   };
   deps.rawpointer."0.1.0" = {};
   deps.redox_syscall."0.1.54" = {};
-  deps.regex."1.1.5" = {
+  deps.regex."1.1.6" = {
     aho_corasick = "0.7.3";
     memchr = "2.2.0";
     regex_syntax = "0.6.6";
@@ -397,9 +397,9 @@ rec {
     serde_derive = "1.0.90";
   };
   deps.serde_derive."1.0.90" = {
-    proc_macro2 = "0.4.27";
+    proc_macro2 = "0.4.28";
     quote = "0.6.12";
-    syn = "0.15.30";
+    syn = "0.15.33";
   };
   deps.serde_json."1.0.39" = {
     itoa = "0.4.3";
@@ -413,8 +413,8 @@ rec {
     hashbrown = "0.1.8";
     ndarray = "0.12.1";
   };
-  deps.syn."0.15.30" = {
-    proc_macro2 = "0.4.27";
+  deps.syn."0.15.33" = {
+    proc_macro2 = "0.4.28";
     quote = "0.6.12";
     unicode_xid = "0.1.0";
   };
