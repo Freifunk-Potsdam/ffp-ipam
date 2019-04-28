@@ -667,53 +667,53 @@ rec {
 
 
 # end
-# hyper-0.10.15
+# hyper-0.10.16
 
-  crates.hyper."0.10.15" = deps: { features?(features_.hyper."0.10.15" deps {}) }: buildRustCrate {
+  crates.hyper."0.10.16" = deps: { features?(features_.hyper."0.10.16" deps {}) }: buildRustCrate {
     crateName = "hyper";
-    version = "0.10.15";
+    version = "0.10.16";
     authors = [ "Sean McArthur <sean.monstar@gmail.com>" "Jonathan Reem <jonathan.reem@gmail.com>" ];
-    sha256 = "14bf31dwwfvza3kfc4mmk4q0v7iq5ys3hiz7islij1x9g4c53s9p";
+    sha256 = "078jqmrjk7gdrfqjnydhyh8vb93vr4zymid84l7x67abary947x5";
     dependencies = mapFeatures features ([
-      (crates."base64"."${deps."hyper"."0.10.15"."base64"}" deps)
-      (crates."httparse"."${deps."hyper"."0.10.15"."httparse"}" deps)
-      (crates."language_tags"."${deps."hyper"."0.10.15"."language_tags"}" deps)
-      (crates."log"."${deps."hyper"."0.10.15"."log"}" deps)
-      (crates."mime"."${deps."hyper"."0.10.15"."mime"}" deps)
-      (crates."num_cpus"."${deps."hyper"."0.10.15"."num_cpus"}" deps)
-      (crates."time"."${deps."hyper"."0.10.15"."time"}" deps)
-      (crates."traitobject"."${deps."hyper"."0.10.15"."traitobject"}" deps)
-      (crates."typeable"."${deps."hyper"."0.10.15"."typeable"}" deps)
-      (crates."unicase"."${deps."hyper"."0.10.15"."unicase"}" deps)
-      (crates."url"."${deps."hyper"."0.10.15"."url"}" deps)
+      (crates."base64"."${deps."hyper"."0.10.16"."base64"}" deps)
+      (crates."httparse"."${deps."hyper"."0.10.16"."httparse"}" deps)
+      (crates."language_tags"."${deps."hyper"."0.10.16"."language_tags"}" deps)
+      (crates."log"."${deps."hyper"."0.10.16"."log"}" deps)
+      (crates."mime"."${deps."hyper"."0.10.16"."mime"}" deps)
+      (crates."num_cpus"."${deps."hyper"."0.10.16"."num_cpus"}" deps)
+      (crates."time"."${deps."hyper"."0.10.16"."time"}" deps)
+      (crates."traitobject"."${deps."hyper"."0.10.16"."traitobject"}" deps)
+      (crates."typeable"."${deps."hyper"."0.10.16"."typeable"}" deps)
+      (crates."unicase"."${deps."hyper"."0.10.16"."unicase"}" deps)
+      (crates."url"."${deps."hyper"."0.10.16"."url"}" deps)
     ]);
-    features = mkFeatures (features."hyper"."0.10.15" or {});
+    features = mkFeatures (features."hyper"."0.10.16" or {});
   };
-  features_.hyper."0.10.15" = deps: f: updateFeatures f (rec {
-    base64."${deps.hyper."0.10.15".base64}".default = true;
-    httparse."${deps.hyper."0.10.15".httparse}".default = true;
-    hyper."0.10.15".default = (f.hyper."0.10.15".default or true);
-    language_tags."${deps.hyper."0.10.15".language_tags}".default = true;
-    log."${deps.hyper."0.10.15".log}".default = true;
-    mime."${deps.hyper."0.10.15".mime}".default = true;
-    num_cpus."${deps.hyper."0.10.15".num_cpus}".default = true;
-    time."${deps.hyper."0.10.15".time}".default = true;
-    traitobject."${deps.hyper."0.10.15".traitobject}".default = true;
-    typeable."${deps.hyper."0.10.15".typeable}".default = true;
-    unicase."${deps.hyper."0.10.15".unicase}".default = true;
-    url."${deps.hyper."0.10.15".url}".default = true;
+  features_.hyper."0.10.16" = deps: f: updateFeatures f (rec {
+    base64."${deps.hyper."0.10.16".base64}".default = true;
+    httparse."${deps.hyper."0.10.16".httparse}".default = true;
+    hyper."0.10.16".default = (f.hyper."0.10.16".default or true);
+    language_tags."${deps.hyper."0.10.16".language_tags}".default = true;
+    log."${deps.hyper."0.10.16".log}".default = true;
+    mime."${deps.hyper."0.10.16".mime}".default = true;
+    num_cpus."${deps.hyper."0.10.16".num_cpus}".default = true;
+    time."${deps.hyper."0.10.16".time}".default = true;
+    traitobject."${deps.hyper."0.10.16".traitobject}".default = true;
+    typeable."${deps.hyper."0.10.16".typeable}".default = true;
+    unicase."${deps.hyper."0.10.16".unicase}".default = true;
+    url."${deps.hyper."0.10.16".url}".default = true;
   }) [
-    (features_.base64."${deps."hyper"."0.10.15"."base64"}" deps)
-    (features_.httparse."${deps."hyper"."0.10.15"."httparse"}" deps)
-    (features_.language_tags."${deps."hyper"."0.10.15"."language_tags"}" deps)
-    (features_.log."${deps."hyper"."0.10.15"."log"}" deps)
-    (features_.mime."${deps."hyper"."0.10.15"."mime"}" deps)
-    (features_.num_cpus."${deps."hyper"."0.10.15"."num_cpus"}" deps)
-    (features_.time."${deps."hyper"."0.10.15"."time"}" deps)
-    (features_.traitobject."${deps."hyper"."0.10.15"."traitobject"}" deps)
-    (features_.typeable."${deps."hyper"."0.10.15"."typeable"}" deps)
-    (features_.unicase."${deps."hyper"."0.10.15"."unicase"}" deps)
-    (features_.url."${deps."hyper"."0.10.15"."url"}" deps)
+    (features_.base64."${deps."hyper"."0.10.16"."base64"}" deps)
+    (features_.httparse."${deps."hyper"."0.10.16"."httparse"}" deps)
+    (features_.language_tags."${deps."hyper"."0.10.16"."language_tags"}" deps)
+    (features_.log."${deps."hyper"."0.10.16"."log"}" deps)
+    (features_.mime."${deps."hyper"."0.10.16"."mime"}" deps)
+    (features_.num_cpus."${deps."hyper"."0.10.16"."num_cpus"}" deps)
+    (features_.time."${deps."hyper"."0.10.16"."time"}" deps)
+    (features_.traitobject."${deps."hyper"."0.10.16"."traitobject"}" deps)
+    (features_.typeable."${deps."hyper"."0.10.16"."typeable"}" deps)
+    (features_.unicase."${deps."hyper"."0.10.16"."unicase"}" deps)
+    (features_.url."${deps."hyper"."0.10.16"."url"}" deps)
   ];
 
 
@@ -1082,33 +1082,33 @@ rec {
 
 
 # end
-# libc-0.2.51
+# libc-0.2.53
 
-  crates.libc."0.2.51" = deps: { features?(features_.libc."0.2.51" deps {}) }: buildRustCrate {
+  crates.libc."0.2.53" = deps: { features?(features_.libc."0.2.53" deps {}) }: buildRustCrate {
     crateName = "libc";
-    version = "0.2.51";
+    version = "0.2.53";
     authors = [ "The Rust Project Developers" ];
-    sha256 = "1lzavxj1ymm7vghs6nmzq9shprdlqby73py9k30gwvv0dwy365cv";
+    sha256 = "1xll5wv9lyg96h80p5ph27igrdnw3y19rdid6g6vpvc42h5mkkwc";
     build = "build.rs";
     dependencies = mapFeatures features ([
 ]);
-    features = mkFeatures (features."libc"."0.2.51" or {});
+    features = mkFeatures (features."libc"."0.2.53" or {});
   };
-  features_.libc."0.2.51" = deps: f: updateFeatures f (rec {
+  features_.libc."0.2.53" = deps: f: updateFeatures f (rec {
     libc = fold recursiveUpdate {} [
-      { "0.2.51".align =
-        (f.libc."0.2.51".align or false) ||
-        (f.libc."0.2.51".rustc-dep-of-std or false) ||
-        (libc."0.2.51"."rustc-dep-of-std" or false); }
-      { "0.2.51".default = (f.libc."0.2.51".default or true); }
-      { "0.2.51".rustc-std-workspace-core =
-        (f.libc."0.2.51".rustc-std-workspace-core or false) ||
-        (f.libc."0.2.51".rustc-dep-of-std or false) ||
-        (libc."0.2.51"."rustc-dep-of-std" or false); }
-      { "0.2.51".use_std =
-        (f.libc."0.2.51".use_std or false) ||
-        (f.libc."0.2.51".default or false) ||
-        (libc."0.2.51"."default" or false); }
+      { "0.2.53".align =
+        (f.libc."0.2.53".align or false) ||
+        (f.libc."0.2.53".rustc-dep-of-std or false) ||
+        (libc."0.2.53"."rustc-dep-of-std" or false); }
+      { "0.2.53".default = (f.libc."0.2.53".default or true); }
+      { "0.2.53".rustc-std-workspace-core =
+        (f.libc."0.2.53".rustc-std-workspace-core or false) ||
+        (f.libc."0.2.53".rustc-dep-of-std or false) ||
+        (libc."0.2.53"."rustc-dep-of-std" or false); }
+      { "0.2.53".use_std =
+        (f.libc."0.2.53".use_std or false) ||
+        (f.libc."0.2.53".default or false) ||
+        (libc."0.2.53"."default" or false); }
     ];
   }) [];
 
@@ -1948,30 +1948,30 @@ rec {
 
 
 # end
-# proc-macro2-0.4.28
+# proc-macro2-0.4.29
 
-  crates.proc_macro2."0.4.28" = deps: { features?(features_.proc_macro2."0.4.28" deps {}) }: buildRustCrate {
+  crates.proc_macro2."0.4.29" = deps: { features?(features_.proc_macro2."0.4.29" deps {}) }: buildRustCrate {
     crateName = "proc-macro2";
-    version = "0.4.28";
+    version = "0.4.29";
     authors = [ "Alex Crichton <alex@alexcrichton.com>" ];
-    sha256 = "0psry336plfis1apnh6ci48wb38h9z7aflf03y4c8lapwpa2rjxy";
+    sha256 = "08jfiqzh7drl67061aiwv9g93rpzydg39wvsyw4jn2h3n6chw1x3";
     build = "build.rs";
     dependencies = mapFeatures features ([
-      (crates."unicode_xid"."${deps."proc_macro2"."0.4.28"."unicode_xid"}" deps)
+      (crates."unicode_xid"."${deps."proc_macro2"."0.4.29"."unicode_xid"}" deps)
     ]);
-    features = mkFeatures (features."proc_macro2"."0.4.28" or {});
+    features = mkFeatures (features."proc_macro2"."0.4.29" or {});
   };
-  features_.proc_macro2."0.4.28" = deps: f: updateFeatures f (rec {
+  features_.proc_macro2."0.4.29" = deps: f: updateFeatures f (rec {
     proc_macro2 = fold recursiveUpdate {} [
-      { "0.4.28".default = (f.proc_macro2."0.4.28".default or true); }
-      { "0.4.28".proc-macro =
-        (f.proc_macro2."0.4.28".proc-macro or false) ||
-        (f.proc_macro2."0.4.28".default or false) ||
-        (proc_macro2."0.4.28"."default" or false); }
+      { "0.4.29".default = (f.proc_macro2."0.4.29".default or true); }
+      { "0.4.29".proc-macro =
+        (f.proc_macro2."0.4.29".proc-macro or false) ||
+        (f.proc_macro2."0.4.29".default or false) ||
+        (proc_macro2."0.4.29"."default" or false); }
     ];
-    unicode_xid."${deps.proc_macro2."0.4.28".unicode_xid}".default = true;
+    unicode_xid."${deps.proc_macro2."0.4.29".unicode_xid}".default = true;
   }) [
-    (features_.unicode_xid."${deps."proc_macro2"."0.4.28"."unicode_xid"}" deps)
+    (features_.unicode_xid."${deps."proc_macro2"."0.4.29"."unicode_xid"}" deps)
   ];
 
 

@@ -83,7 +83,7 @@ rec {
     url = "1.7.2";
   };
   deps.curl_sys."0.4.18" = {
-    libc = "0.2.51";
+    libc = "0.2.53";
     libz_sys = "1.0.25";
     cc = "1.0.35";
     pkg_config = "0.3.14";
@@ -100,7 +100,7 @@ rec {
   };
   deps.devise_core."0.2.0" = {
     bitflags = "1.0.4";
-    proc_macro2 = "0.4.28";
+    proc_macro2 = "0.4.29";
     quote = "0.6.12";
     syn = "0.15.33";
   };
@@ -124,15 +124,15 @@ rec {
   deps.filetime."0.2.5" = {
     cfg_if = "0.1.7";
     redox_syscall = "0.1.54";
-    libc = "0.2.51";
+    libc = "0.2.53";
   };
   deps.fsevent."0.2.17" = {
     bitflags = "0.7.0";
     fsevent_sys = "0.1.6";
-    libc = "0.2.51";
+    libc = "0.2.53";
   };
   deps.fsevent_sys."0.1.6" = {
-    libc = "0.2.51";
+    libc = "0.2.53";
   };
   deps.fuchsia_zircon."0.3.3" = {
     bitflags = "1.0.4";
@@ -141,7 +141,7 @@ rec {
   deps.fuchsia_zircon_sys."0.3.3" = {};
   deps.git2."0.8.0" = {
     bitflags = "1.0.4";
-    libc = "0.2.51";
+    libc = "0.2.53";
     libgit2_sys = "0.7.11";
     log = "0.4.6";
     url = "1.7.2";
@@ -153,7 +153,7 @@ rec {
     scopeguard = "0.3.3";
   };
   deps.httparse."1.3.3" = {};
-  deps.hyper."0.10.15" = {
+  deps.hyper."0.10.16" = {
     base64 = "0.9.3";
     httparse = "1.3.3";
     language_tags = "0.2.2";
@@ -175,13 +175,13 @@ rec {
   deps.inotify."0.6.1" = {
     bitflags = "1.0.4";
     inotify_sys = "0.1.3";
-    libc = "0.2.51";
+    libc = "0.2.53";
   };
   deps.inotify_sys."0.1.3" = {
-    libc = "0.2.51";
+    libc = "0.2.53";
   };
   deps.iovec."0.1.2" = {
-    libc = "0.2.51";
+    libc = "0.2.53";
     winapi = "0.2.8";
   };
   deps.ipnet."2.0.0" = {
@@ -190,7 +190,7 @@ rec {
   deps.isatty."0.1.9" = {
     cfg_if = "0.1.7";
     redox_syscall = "0.1.54";
-    libc = "0.2.51";
+    libc = "0.2.53";
     winapi = "0.3.7";
   };
   deps.itertools."0.7.11" = {
@@ -204,10 +204,10 @@ rec {
   deps.language_tags."0.2.2" = {};
   deps.lazy_static."1.3.0" = {};
   deps.lazycell."1.2.1" = {};
-  deps.libc."0.2.51" = {};
+  deps.libc."0.2.53" = {};
   deps.libgit2_sys."0.7.11" = {
     curl_sys = "0.4.18";
-    libc = "0.2.51";
+    libc = "0.2.53";
     libssh2_sys = "0.2.11";
     libz_sys = "1.0.25";
     cc = "1.0.35";
@@ -215,14 +215,14 @@ rec {
     openssl_sys = "0.9.43";
   };
   deps.libssh2_sys."0.2.11" = {
-    libc = "0.2.51";
+    libc = "0.2.53";
     libz_sys = "1.0.25";
     cc = "1.0.35";
     pkg_config = "0.3.14";
     openssl_sys = "0.9.43";
   };
   deps.libz_sys."1.0.25" = {
-    libc = "0.2.51";
+    libc = "0.2.53";
     cc = "1.0.35";
     pkg_config = "0.3.14";
   };
@@ -248,7 +248,7 @@ rec {
     slab = "0.4.2";
     fuchsia_zircon = "0.3.3";
     fuchsia_zircon_sys = "0.3.3";
-    libc = "0.2.51";
+    libc = "0.2.53";
     kernel32_sys = "0.2.2";
     miow = "0.2.1";
     winapi = "0.2.8";
@@ -273,13 +273,13 @@ rec {
   };
   deps.net2."0.2.33" = {
     cfg_if = "0.1.7";
-    libc = "0.2.51";
+    libc = "0.2.53";
     winapi = "0.3.7";
   };
   deps.notify."4.0.10" = {
     bitflags = "1.0.4";
     filetime = "0.2.5";
-    libc = "0.2.51";
+    libc = "0.2.53";
     walkdir = "2.2.7";
     inotify = "0.6.1";
     mio = "0.6.16";
@@ -294,11 +294,11 @@ rec {
   };
   deps.num_traits."0.2.6" = {};
   deps.num_cpus."1.10.0" = {
-    libc = "0.2.51";
+    libc = "0.2.53";
   };
   deps.openssl_probe."0.1.2" = {};
   deps.openssl_sys."0.9.43" = {
-    libc = "0.2.51";
+    libc = "0.2.53";
     cc = "1.0.35";
     pkg_config = "0.3.14";
     rustc_version = "0.2.3";
@@ -307,7 +307,7 @@ rec {
     pear_codegen = "0.1.2";
   };
   deps.pear_codegen."0.1.2" = {
-    proc_macro2 = "0.4.28";
+    proc_macro2 = "0.4.29";
     quote = "0.6.12";
     syn = "0.15.33";
     version_check = "0.1.5";
@@ -315,11 +315,11 @@ rec {
   };
   deps.percent_encoding."1.0.1" = {};
   deps.pkg_config."0.3.14" = {};
-  deps.proc_macro2."0.4.28" = {
+  deps.proc_macro2."0.4.29" = {
     unicode_xid = "0.1.0";
   };
   deps.quote."0.6.12" = {
-    proc_macro2 = "0.4.28";
+    proc_macro2 = "0.4.29";
   };
   deps.rawpointer."0.1.0" = {};
   deps.redox_syscall."0.1.54" = {};
@@ -337,7 +337,7 @@ rec {
     untrusted = "0.6.2";
     cc = "1.0.35";
     lazy_static = "1.3.0";
-    libc = "0.2.51";
+    libc = "0.2.53";
   };
   deps.rocket."0.4.0" = {
     base64 = "0.10.1";
@@ -371,7 +371,7 @@ rec {
   };
   deps.rocket_http."0.4.0" = {
     cookie = "0.11.0";
-    hyper = "0.10.15";
+    hyper = "0.10.16";
     indexmap = "1.0.2";
     pear = "0.1.2";
     percent_encoding = "1.0.1";
@@ -397,7 +397,7 @@ rec {
     serde_derive = "1.0.90";
   };
   deps.serde_derive."1.0.90" = {
-    proc_macro2 = "0.4.28";
+    proc_macro2 = "0.4.29";
     quote = "0.6.12";
     syn = "0.15.33";
   };
@@ -414,7 +414,7 @@ rec {
     ndarray = "0.12.1";
   };
   deps.syn."0.15.33" = {
-    proc_macro2 = "0.4.28";
+    proc_macro2 = "0.4.29";
     quote = "0.6.12";
     unicode_xid = "0.1.0";
   };
@@ -422,7 +422,7 @@ rec {
     lazy_static = "1.3.0";
   };
   deps.time."0.1.42" = {
-    libc = "0.2.51";
+    libc = "0.2.53";
     redox_syscall = "0.1.54";
     winapi = "0.3.7";
   };
