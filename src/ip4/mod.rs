@@ -20,7 +20,7 @@ pub struct Ip4Data {
     pub contact: String,
 }
 
-#[get("/")]
+#[get("/", format = "json")]
 pub fn get(_t: Token, repo_path: State<RepoPath>) -> JsonValue {
     // TODO: I'm not sure wether this is impossible to conflict with a /register request
     // maybe the file can be read, while /register is writing to it?

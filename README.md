@@ -1,6 +1,7 @@
 # IPv4 Address Management für Freifunk Potsdam
 
 [![built with nix](https://builtwithnix.org/badge.svg)](https://builtwithnix.org)
+
 [CI status](https://hydra.erictapen.name/jobset/ffp-ipam/master)
 
 ## API
@@ -11,6 +12,7 @@ Wanna try it out? Current master is hosted for testing on `https://ipam.erictape
 
 ```bash
 curl https://ipam.erictapen.name/ip4 \
+  -H 'Accept: application/json' \ # This line can be omitted with curl, but in general ffp-ipam cares about the Accept header and serves HTML if wanted!
   -H 'x-api-key: ThisIsNotSecretYet'
 ```
 
@@ -46,6 +48,7 @@ ffp-ipam \
   --token "ThisIsNotSecretYet" \
   --ip4-range "192.168.0.0/24" \
   --ip4-range "10.0.0.0/16" \
+  --static-dir ./web/build/ \
   /path/to/state/dir
 
 ```

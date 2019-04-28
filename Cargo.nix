@@ -35,6 +35,7 @@ rec {
       rocket."${deps.ffp_ipam."0.1.0".rocket}".default = true;
       rocket_contrib = fold recursiveUpdate {} [
         { "${deps.ffp_ipam."0.1.0".rocket_contrib}"."json" = true; }
+        { "${deps.ffp_ipam."0.1.0".rocket_contrib}"."serve" = true; }
         { "${deps.ffp_ipam."0.1.0".rocket_contrib}".default = (f.rocket_contrib."${deps.ffp_ipam."0.1.0".rocket_contrib}".default or false); }
       ];
       serde = fold recursiveUpdate {} [
