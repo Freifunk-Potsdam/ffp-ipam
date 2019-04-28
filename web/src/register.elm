@@ -10,6 +10,13 @@ main =
     Browser.sandbox { init = init, update = update, view = view }
 
 
+type FieldType
+    = IP4
+    | NodeName
+    | Location
+    | Contact
+
+
 
 -- Model
 
@@ -36,15 +43,26 @@ init =
 
 
 type Msg
-    = Change String
+    = Change FieldType String
     | Send
 
 
 update : Msg -> Model -> Model
 update msg model =
     case msg of
-        Change newContent ->
-            { model | ip4 = newContent }
+        Change fieldType newContent ->
+            case fieldType of
+                IP4 ->
+                    { model | ip4 = newContent }
+
+                NodeName ->
+                    { model | node_name = newContent }
+
+                Location ->
+                    { model | location = newContent }
+
+                Contact ->
+                    { model | contact = newContent }
 
         Send ->
             model
@@ -57,9 +75,21 @@ update msg model =
 view : Model -> Html Msg
 view model =
     div []
-        [ div [] [ input [ placeholder "IPv4 address", value model.ip4, onInput Change ] [] ]
-        , div [] [ input [ placeholder "Node name", value model.node_name, onInput Change ] [] ]
-        , div [] [ input [ placeholder "Location", value model.location, onInput Change ] [] ]
-        , div [] [ input [ placeholder "Contact", value model.contact, onInput Change ] [] ]
-        , div [] [ button [ onClick Send ] [ text "Send" ] ]
-        ]
+        (List.map
+            (\( fieldType, fieldString, fieldValue ) ->
+                div
+                    []
+                    [ input
+                        [ placeholder fieldString
+                        , value (fieldValue model)
+                        , onInput (Change fieldType)
+                        ]
+                        []
+                    ]
+            )
+            [ ( IP4, "IPv4 address", .ip4 )
+            , ( NodeName, "Node name", .node_name )
+            , ( Location, "Location", .location )
+            , ( Contact, "Contact", .contact )
+            ]
+        )
