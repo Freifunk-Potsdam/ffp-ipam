@@ -8,5 +8,6 @@ pkgs.mkShell {
       pandoc
       elmPackages.elm
       elmPackages.elm-format
+      elm2nix
     ];
 }
