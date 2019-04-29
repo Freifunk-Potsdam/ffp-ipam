@@ -6,7 +6,7 @@
 
 ## API
 
-Wanna try it out? Current master is hosted for testing on [`https://ipam.erictapen.name/ip4/`].
+Wanna try it out? Current master is hosted for testing on [`https://ipam.erictapen.name/ip4/`](https://ipam.erictapen.name/ip4/).
 
 #### List registered IPv4 adresses
 
