@@ -7,7 +7,7 @@ let
     inherit (moz_nixpkgs) lib buildPlatform buildRustCrateHelpers fetchgit;
     buildRustCrate = moz_nixpkgs.buildRustCrate.override {
       # rustc = nixpkgs.latest.rustChannels.nightly.rust;
-      rustc = (moz_nixpkgs.rustChannelOf { date = "2019-03-15"; channel = "nightly"; }).rust;
+      rustc = (moz_nixpkgs.rustChannelOf { date = "2019-10-20"; channel = "nightly"; }).rust;
     };
     cratesIO = import ./nix/crates-io.nix { 
       inherit (moz_nixpkgs) lib buildRustCrate buildRustCrateHelpers;
