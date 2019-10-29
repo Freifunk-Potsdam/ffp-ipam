@@ -38,7 +38,6 @@ Options:
     --ip4-range IPRANGE           Allowed IPv4 ranges supplied in CIDR notation, e.g. 192.168.0.0/24.
     --listen IP                   IPv4 address to listen on, e.g. 0.0.0.0. [default: 127.0.0.1]
     --port PORT                   TCP Port to listen on, e.g. 80. [default: 8000]
-    --static-dir DIR              Path to directory with the front-end files. [default: ./web/build/]
 ";
 
 #[derive(Deserialize)]
@@ -47,7 +46,6 @@ struct CliArgs {
     flag_ip4_range: ip4::Ip4Ranges,
     flag_listen: String,
     flag_port: u16,
-    flag_static_dir: PathBuf,
     arg_state_dir: repo::RepoPath,
 }
 
@@ -63,10 +61,7 @@ fn main() {
         .finalize()
         .unwrap();
     // ...and then launch the Rocket with parts of the CLI args attached
-    println!("Using the static dir {:?}.", args.flag_static_dir);
-    // TODO Maybe we want to check here, that flag_static_dir contains only *.html and *.css?
     rocket::custom(rocket_config)
-        .mount("/ip4", StaticFiles::from(args.flag_static_dir))
         .mount("/ip4", routes![ip4::get, ip4::put])
         .attach(auth::auth_fairing(args.flag_token))
         .attach(ip4::ip4_fairing(args.flag_ip4_range))

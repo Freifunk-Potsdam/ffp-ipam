@@ -6,8 +6,5 @@ pkgs.mkShell {
       pkgconfig
       openssl
       pandoc
-      elmPackages.elm
-      elmPackages.elm-format
-      elm2nix
     ];
 }

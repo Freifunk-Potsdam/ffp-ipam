@@ -15,5 +15,4 @@ let
   });
 in {
   ffp-ipam = crates.ffp_ipam {};
-  ffp-ipam-web = import ./web { inherit nixpkgs; };
 }

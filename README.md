@@ -48,11 +48,7 @@ ffp-ipam \
   --token "ThisIsNotSecretYet" \
   --ip4-range "192.168.0.0/24" \
   --ip4-range "10.0.0.0/16" \
-  --static-dir ./web/build/ \
   /path/to/state/dir
 
 ```
 
-### Building the Web app
-
-See [./web](./web/README.md).
