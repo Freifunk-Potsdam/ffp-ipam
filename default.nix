@@ -11,9 +11,9 @@ let
     inherit (pkgs) lib runCommand symlinkJoin stdenv writeText jq rsync darwin remarshal cargo zstd fetchurl;
     rustc = (
       pkgs.rustChannelOf {
-        date = "2019-10-20";
+        date = "2020-02-11";
         channel = "nightly";
-        sha256 = "0n7i18b0kbz2x2zs3aaxhzrl7d92k2sn3rbfzy0ybsmys2r20n5d";
+        sha256 = "sha256:1f7sdzgv1cwnv2nv8299b2s7lq1pjcxa4kzm499ccl8ca6ynfdbx";
       }
     ).rust;
   };
@@ -25,5 +25,6 @@ in
       openssl
     ];
     doCheck = false;
+    cargoBuildOptions = _: [ "$cargo_release" ''-j "$NIX_BUILD_CORES"'' "--out-dir" "out" "--message-format=json" ];
   }
 
