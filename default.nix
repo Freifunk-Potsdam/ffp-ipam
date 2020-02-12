@@ -25,6 +25,5 @@ in
       openssl
     ];
     doCheck = false;
-    cargoBuildOptions = _: [ "$cargo_release" ''-j "$NIX_BUILD_CORES"'' "--out-dir" "out" "--message-format=json" ];
   }
 
