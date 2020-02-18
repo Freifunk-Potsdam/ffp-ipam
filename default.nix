@@ -7,8 +7,7 @@ let
     localSystem.system = "x86_64-linux"; 
     overlays = [ (import nixpkgs-mozilla) ];
   };
-  naerskP = import naersk {
-    inherit (pkgs) lib runCommand symlinkJoin stdenv writeText jq rsync darwin remarshal cargo zstd fetchurl;
+  naerskP = pkgs.callPackage naersk {
     rustc = (
       pkgs.rustChannelOf {
         date = "2020-02-11";
