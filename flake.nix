@@ -22,9 +22,9 @@
     , naersk
     }: rec {
 
-      packages.x86_64-linux.ffp-ipam = import ./default.nix {
+      packages.x86_64-linux.ffp-ipam = (import ./default.nix {
         inherit nixpkgs nixpkgs-mozilla naersk;
-      };
+      }).ffp-ipam;
 
       defaultPackage.x86_64-linux = packages.x86_64-linux.ffp-ipam;
 

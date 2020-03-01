@@ -3,8 +3,8 @@
 , naersk
 }:
 let
-  pkgs = import nixpkgs { 
-    localSystem.system = "x86_64-linux"; 
+  pkgs = import nixpkgs {
+    localSystem.system = "x86_64-linux";
     overlays = [ (import nixpkgs-mozilla) ];
   };
   naerskP = pkgs.callPackage naersk {
@@ -17,12 +17,13 @@ let
     ).rust;
   };
 in
-  naerskP.buildPackage {
+{
+  ffp-ipam = naerskP.buildPackage {
     src = ./.;
     buildInputs = with pkgs; [
       pkgconfig
       openssl
     ];
     doCheck = false;
-  }
-
+  };
+}
