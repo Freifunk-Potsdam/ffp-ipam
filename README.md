@@ -29,7 +29,7 @@ curl https://ipam.erictapen.name/ip4/register \
 
 ### Dependencies
 
-As this uses [Rocket](https://rocket.rs/), you need a recent version of `rustc` for building. [Rustup](https://rustup.rs/) is a way to get it.
+As this uses [Rocket](https://rocket.rs/), you need a nightly version of `rustc` for building. [Rustup](https://rustup.rs/) is a way to get it.
 
 Also you need `pkgconfig` and `openssl` to be installed. If you are using [Nix](https://nixos.org/nix/), `nix-shell` should be enough to get them through `shell.nix`.
 
