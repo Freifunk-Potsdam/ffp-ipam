@@ -1,6 +1,4 @@
 {
-  edition = 201909;
-
   description = "Freifunk Potsdam IP Address Management";
 
   inputs = {
