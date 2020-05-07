@@ -5,11 +5,11 @@
 
   inputs = {
     naersk = {
-      uri = "github:nmattia/naersk";
+      url = "github:nmattia/naersk";
       flake = false;
     };
     nixpkgs-mozilla = {
-      uri = "github:mozilla/nixpkgs-mozilla";
+      url = "github:mozilla/nixpkgs-mozilla";
       flake = false;
     };
     nixpkgs.flake = false;
