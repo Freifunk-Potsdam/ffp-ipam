@@ -33,9 +33,9 @@
             naerskP = pkgs.callPackage naersk {
               rustc = (
                 pkgs.rustChannelOf {
-                  date = "2020-02-11";
+                  date = "2020-11-10";
                   channel = "nightly";
-                  sha256 = "1f7sdzgv1cwnv2nv8299b2s7lq1pjcxa4kzm499ccl8ca6ynfdbx";
+                  sha256 = "sha256-GYFJHS8AL1vuru2oLO4+o/uFCP1Sqg8eCdtCXckzen4=";
                 }
               ).rust;
             };
