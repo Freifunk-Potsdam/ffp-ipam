@@ -1,13 +1,15 @@
-use auth::Token;
+use crate::auth::Token;
 use ipnet::Ipv4Net;
-use repo;
-use repo::RepoPath;
+use crate::repo;
+use crate::repo::RepoPath;
+use rocket::get;
 use rocket::http::{ContentType, Status};
 use rocket::request::Request;
 use rocket::response;
+use rocket::State;
 use rocket::response::{Responder, Response};
 use rocket_contrib::json::{Json, JsonValue};
-use std::collections::{BTreeMap, HashMap};
+use std::collections::BTreeMap;
 use std::fs::File;
 use std::path::Path;
 
@@ -24,11 +26,13 @@ pub struct Ip4Data {
 pub fn get(_t: Token, repo_path: State<RepoPath>) -> JsonValue {
     // TODO: I'm not sure wether this is impossible to conflict with a /register request
     // maybe the file can be read, while /register is writing to it?
-    let path = repo_path.0.to_path_buf().join("ip4.json");
+    let path = repo_path.inner().0.to_path_buf().join("ip4.json");
     let mut json_file = match File::open(&path) {
         Ok(o) => o,
         // if there is no file, return an empty object
-        Err(_) => { return json!({}); },
+        Err(_) => {
+            return json!({});
+        }
     };
     let mut json_str = String::new();
     use std::io::Read;
@@ -43,8 +47,8 @@ pub struct ApiResponse {
     status: Status,
 }
 
-impl<'r> Responder<'r> for ApiResponse {
-    fn respond_to(self, req: &Request) -> response::Result<'r> {
+impl<'r> Responder<'r, 'static> for ApiResponse {
+    fn respond_to(self, req: &'r Request) -> response::Result<'static> {
         Response::build_from(self.json.respond_to(&req).unwrap())
             .status(self.status)
             .header(ContentType::JSON)
@@ -63,8 +67,6 @@ pub struct Ip4Request {
 
 pub type Ip4Dict = BTreeMap<Ip4, Ip4Data>;
 
-use git2::{Commit, Index, Oid, Repository, Signature, Tree};
-use rocket::State;
 #[post("/register", format = "application/json", data = "<msg>")]
 pub fn put(
     _t: Token,
@@ -72,8 +74,10 @@ pub fn put(
     ip4_ranges: State<Ip4Ranges>,
     msg: Json<Ip4Request>,
 ) -> ApiResponse {
+    use git2::{Commit, Index, Signature, Tree};
+
     let ip4_request: Ip4Request = msg.into_inner();
-    let repo_path = repo_path.0.to_path_buf();
+    let repo_path = repo_path.inner().0.to_path_buf();
     println!("{:?}", ip4_request);
     let ip4: Ipv4Net = match ip4_request.ip4.parse::<Ipv4Net>() {
         Err(_) => {
@@ -135,7 +139,8 @@ pub fn put(
         serde_json::to_writer_pretty(json_file, &ip4_dict).unwrap();
     }
     println!("Trying to commit...");
-    let repo = repo::get_repo(repo_path.clone()).expect(&format!("get_repo() failed with path {:?}", repo_path));
+    let repo = repo::get_repo(repo_path.clone())
+        .expect(&format!("get_repo() failed with path {:?}", repo_path));
 
     let tree_id = {
         let mut index: Index = repo.index().unwrap();
@@ -186,7 +191,7 @@ impl Ip4Ranges {
 
 use rocket::fairing::AdHoc;
 pub fn ip4_fairing(ip4_ranges: Ip4Ranges) -> AdHoc {
-    AdHoc::on_attach("IPv4 range", |rocket| {
+    AdHoc::on_attach("IPv4 range", |rocket| async {
         println!("Using the IPv4 ranges {:?}", ip4_ranges);
         Ok(rocket.manage(ip4_ranges))
     })

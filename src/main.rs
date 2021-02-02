@@ -1,5 +1,3 @@
-#![feature(proc_macro_hygiene, decl_macro)]
-
 #[macro_use]
 extern crate rocket;
 #[macro_use]
@@ -15,18 +13,13 @@ extern crate serde_json;
 mod auth;
 mod ip4;
 mod repo;
+
 #[cfg(test)]
 mod tests;
 
 use docopt::Docopt;
-use git2::Repository;
-use rocket::config::{Config, Environment, Value};
+use rocket::config::Config;
 use rocket::Rocket;
-use rocket_contrib::serve::StaticFiles;
-use std::collections::HashMap;
-use std::path::PathBuf;
-use std::sync::Mutex;
-use std::net::Ipv4Addr;
 
 const USAGE: &'static str = "
 Usage: ffp-ipam [options] [--token TOKEN...] [--ip4-range IPRANGE...] <state-dir>
@@ -49,22 +42,20 @@ struct CliArgs {
     arg_state_dir: repo::RepoPath,
 }
 
-fn main() {
+#[launch]
+fn rocket() -> Rocket {
     // parse the CLI args...
     let args: CliArgs = Docopt::new(USAGE)
         .and_then(|d| d.deserialize())
         .unwrap_or_else(|e| e.exit());
     // ...build a Rocket Config with its args...
-    let rocket_config = Config::build(Environment::Production)
-        .address(args.flag_listen)
-        .port(args.flag_port)
-        .finalize()
-        .unwrap();
+    let rocket_config = Config::figment()
+        .merge(("port", args.flag_port))
+        .merge(("address", args.flag_listen));
     // ...and then launch the Rocket with parts of the CLI args attached
     rocket::custom(rocket_config)
         .mount("/ip4", routes![ip4::get, ip4::put])
         .attach(auth::auth_fairing(args.flag_token))
         .attach(ip4::ip4_fairing(args.flag_ip4_range))
         .attach(repo::repo_path_fairing(args.arg_state_dir))
-        .launch();
 }
