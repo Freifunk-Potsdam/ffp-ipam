@@ -8,9 +8,9 @@ pub struct RepoPath(pub PathBuf);
 
 /// fairing to put the path to the git repo inside a request.
 pub fn repo_path_fairing(path: RepoPath) -> AdHoc {
-    AdHoc::on_attach("Git repository", |rocket| async {
+    AdHoc::on_ignite("Git repository", |rocket| async {
         println!("Using the repo path {:?}", path);
-        Ok(rocket.manage(path))
+        rocket.manage(path)
     })
 }
 

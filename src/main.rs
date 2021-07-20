@@ -1,7 +1,6 @@
 #[macro_use]
 extern crate rocket;
-#[macro_use]
-extern crate rocket_contrib;
+extern crate rocket_sync_db_pools;
 extern crate serde;
 #[macro_use]
 extern crate serde_derive;
@@ -19,7 +18,7 @@ mod tests;
 
 use docopt::Docopt;
 use rocket::config::Config;
-use rocket::Rocket;
+use rocket::{Build, Rocket};
 
 const USAGE: &'static str = "
 Usage: ffp-ipam [options] [--token TOKEN...] [--ip4-range IPRANGE...] <state-dir>
@@ -43,7 +42,7 @@ struct CliArgs {
 }
 
 #[launch]
-fn rocket() -> Rocket {
+fn rocket() -> Rocket<Build> {
     // parse the CLI args...
     let args: CliArgs = Docopt::new(USAGE)
         .and_then(|d| d.deserialize())

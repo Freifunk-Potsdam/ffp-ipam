@@ -8,7 +8,7 @@ use rocket::request::Request;
 use rocket::response;
 use rocket::State;
 use rocket::response::{Responder, Response};
-use rocket_contrib::json::{Json, JsonValue};
+use rocket::serde::json::{Json, Value, json};
 use std::collections::BTreeMap;
 use std::fs::File;
 use std::path::Path;
@@ -23,7 +23,7 @@ pub struct Ip4Data {
 }
 
 #[get("/", format = "json")]
-pub fn get(_t: Token, repo_path: State<RepoPath>) -> JsonValue {
+pub fn get(_t: Token, repo_path: &State<RepoPath>) -> Value {
     // TODO: I'm not sure wether this is impossible to conflict with a /register request
     // maybe the file can be read, while /register is writing to it?
     let path = repo_path.inner().0.to_path_buf().join("ip4.json");
@@ -38,12 +38,12 @@ pub fn get(_t: Token, repo_path: State<RepoPath>) -> JsonValue {
     use std::io::Read;
     json_file.read_to_string(&mut json_str).unwrap();
 
-    JsonValue(serde_json::from_str(&json_str).unwrap())
+    Value::String(serde_json::from_str(&json_str).unwrap())
 }
 
 #[derive(Debug)]
 pub struct ApiResponse {
-    json: JsonValue,
+    json: Value,
     status: Status,
 }
 
@@ -70,8 +70,8 @@ pub type Ip4Dict = BTreeMap<Ip4, Ip4Data>;
 #[post("/register", format = "application/json", data = "<msg>")]
 pub fn put(
     _t: Token,
-    repo_path: State<RepoPath>,
-    ip4_ranges: State<Ip4Ranges>,
+    repo_path: &State<RepoPath>,
+    ip4_ranges: &State<Ip4Ranges>,
     msg: Json<Ip4Request>,
 ) -> ApiResponse {
     use git2::{Commit, Index, Signature, Tree};
@@ -191,8 +191,8 @@ impl Ip4Ranges {
 
 use rocket::fairing::AdHoc;
 pub fn ip4_fairing(ip4_ranges: Ip4Ranges) -> AdHoc {
-    AdHoc::on_attach("IPv4 range", |rocket| async {
+    AdHoc::on_ignite("IPv4 range", |rocket| async {
         println!("Using the IPv4 ranges {:?}", ip4_ranges);
-        Ok(rocket.manage(ip4_ranges))
+        rocket.manage(ip4_ranges)
     })
 }

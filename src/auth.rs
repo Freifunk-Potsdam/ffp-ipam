@@ -16,12 +16,12 @@ pub enum ApiKeyError {
 }
 
 #[rocket::async_trait]
-impl<'a, 'r> FromRequest<'a, 'r> for Token {
+impl<'r> FromRequest<'r> for Token {
     type Error = ApiKeyError;
 
-    async fn from_request(request: &'a Request<'r>) -> request::Outcome<Self, Self::Error> {
+    async fn from_request(request: &'r Request<'_>) -> request::Outcome<Self, Self::Error> {
         let keys: Vec<_> = request.headers().get("x-api-key").collect();
-        let tokens = request.guard::<State<Vec<Token>>>().await.unwrap().inner();
+        let tokens = request.guard::<&State<Vec<Token>>>().await.unwrap().inner();
         match keys.len() {
             0 => Outcome::Failure((Status::BadRequest, ApiKeyError::Missing)),
             1 => {
@@ -50,9 +50,9 @@ fn ct_compare(a: &str, b: &str) -> bool {
 }
 
 pub fn auth_fairing(tokens: Vec<Token>) -> AdHoc {
-    AdHoc::on_attach("Tokens", |rocket| async {
+    AdHoc::on_ignite("Tokens", |rocket| async {
         println!("Using the authentication tokens {:?}", tokens);
-        Ok(rocket.manage(tokens))
+        rocket.manage(tokens)
     })
 }
 
