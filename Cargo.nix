@@ -583,7 +583,7 @@ rec {
         ];
         src = lib.cleanSourceWith { filter = sourceFilter;  src = ./.; };
         authors = [
-          "Justin Humm <justin.humm@posteo.de>"
+          "Kerstin Humm <kerstin@erictapen.name>"
         ];
         dependencies = [
           {
