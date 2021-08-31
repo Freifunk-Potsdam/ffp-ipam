@@ -4,7 +4,6 @@ use rocket::outcome::Outcome;
 use rocket::request::{self, FromRequest, Request};
 use rocket::State;
 
-
 #[derive(Debug, Deserialize)]
 pub struct Token(pub String);
 
@@ -55,4 +54,3 @@ pub fn auth_fairing(tokens: Vec<Token>) -> AdHoc {
         rocket.manage(tokens)
     })
 }
-

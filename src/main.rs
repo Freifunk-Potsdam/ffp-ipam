@@ -20,7 +20,7 @@ use docopt::Docopt;
 use rocket::config::Config;
 use rocket::{Build, Rocket};
 
-const USAGE: &'static str = "
+const USAGE: &str = "
 Usage: ffp-ipam [options] [--token TOKEN...] [--ip4-range IPRANGE...] <state-dir>
        ffp-ipam --help
 

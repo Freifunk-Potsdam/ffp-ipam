@@ -1,14 +1,14 @@
 use crate::auth::Token;
-use ipnet::Ipv4Net;
 use crate::repo;
 use crate::repo::RepoPath;
+use ipnet::Ipv4Net;
 use rocket::get;
 use rocket::http::{ContentType, Status};
 use rocket::request::Request;
 use rocket::response;
-use rocket::State;
 use rocket::response::{Responder, Response};
-use rocket::serde::json::{Json, Value, json};
+use rocket::serde::json::{json, Json, Value};
+use rocket::State;
 use std::collections::BTreeMap;
 use std::fs::File;
 use std::path::Path;
@@ -140,7 +140,7 @@ pub fn put(
     }
     println!("Trying to commit...");
     let repo = repo::get_repo(repo_path.clone())
-        .expect(&format!("get_repo() failed with path {:?}", repo_path));
+        .unwrap_or_else(|_| panic!("get_repo() failed with path {:?}", repo_path));
 
     let tree_id = {
         let mut index: Index = repo.index().unwrap();

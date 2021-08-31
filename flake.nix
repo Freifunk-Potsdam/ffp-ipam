@@ -32,6 +32,7 @@
           buildInputs = with pkgs; [
             cargo
             rustc
+	    clippy
             crate2nix
             pkgconfig
             openssl
