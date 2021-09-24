@@ -13,4 +13,5 @@ serde_json = "*"
 ipnet = { version = "*", features = ["serde"] }
 git2 = "*"
 docopt = "*"
+rust-crypto = "*"
 

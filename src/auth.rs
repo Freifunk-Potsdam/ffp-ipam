@@ -1,3 +1,4 @@
+use crypto::util::fixed_time_eq;
 use rocket::fairing::AdHoc;
 use rocket::http::Status;
 use rocket::outcome::Outcome;
@@ -25,7 +26,7 @@ impl<'r> FromRequest<'r> for Token {
             0 => Outcome::Failure((Status::BadRequest, ApiKeyError::Missing)),
             1 => {
                 for t in tokens {
-                    if ct_compare(&t.0, keys[0]) {
+                    if fixed_time_eq(&t.0.as_bytes(), keys[0].as_bytes()) {
                         return Outcome::Success(Token(keys[0].to_string()));
                     }
                 }
@@ -34,18 +35,6 @@ impl<'r> FromRequest<'r> for Token {
             _ => Outcome::Failure((Status::BadRequest, ApiKeyError::BadCount)),
         }
     }
-}
-
-// constant time comparison
-fn ct_compare(a: &str, b: &str) -> bool {
-    if a.len() != b.len() {
-        return false;
-    }
-
-    a.bytes()
-        .zip(b.bytes())
-        .fold(0, |acc, (a, b)| acc | (a ^ b))
-        == 0
 }
 
 pub fn auth_fairing(tokens: Vec<Token>) -> AdHoc {
