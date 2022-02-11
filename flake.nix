@@ -1,6 +1,8 @@
 {
   description = "Freifunk Potsdam IP Address Management";
 
+  inputs.nixpkgs.url = "github:NixOS/Nixpkgs/nixos-unstable";
+
   outputs =
     { self
     , nixpkgs
